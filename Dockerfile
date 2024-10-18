@@ -86,9 +86,9 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://bitcoincore.org/bin/bitcoin-core-${VERSION}/$(cat /tarball-name)
-RUN wget https://bitcoincore.org/bin/bitcoin-core-${VERSION}/SHA256SUMS.asc
-RUN wget https://bitcoincore.org/bin/bitcoin-core-${VERSION}/SHA256SUMS
+RUN wget https://bitcoinknots.org/files/27.x/27.1.knots20240801/$(cat /tarball-name)
+RUN wget https://bitcoinknots.org/files/27.x/27.1.knots20240801/SHA256SUMS.asc
+RUN wget https://bitcoinknots.org/files/27.x/27.1.knots20240801/SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
@@ -106,6 +106,10 @@ RUN tar -zxvf $(cat /tarball-name) --strip-components=1
 
 # Final image
 FROM debian:stable-slim
+
+RUN apt update
+
+RUN apt install curl -y
 
 COPY --from=builder /build/bin/bitcoind /bin
 COPY --from=builder /build/bin/bitcoin-cli /bin
