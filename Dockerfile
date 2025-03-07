@@ -9,7 +9,7 @@ WORKDIR /build
 
 RUN echo "Installing build deps"
 RUN apt-get update
-RUN apt-get install -y wget pgp
+RUN apt-get install -y wget pgp curl jq
 
 RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     case "${TARGETPLATFORM}" in \
@@ -27,7 +27,7 @@ RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
 RUN curl -s "https://api.github.com/repos/bitcoinknots/guix.sigs/contents/builder-keys" | jq -r '.[].download_url' | while read url; do curl -s "$url" | gpg --import; done
-RUN gpg --verify SHA256SUMS.asc 2>&1 >/dev/null | grep "^gpg: Good signature from" || { echo "No valid signature"; exit 1; }
+RUN gpg --verify SHA256SUMS.asc SHA256SUMS
 RUN echo "PGP signature verification passed"
 
 RUN echo "Verifying checksums"
