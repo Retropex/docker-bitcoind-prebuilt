@@ -9,44 +9,25 @@ WORKDIR /build
 
 RUN echo "Installing build deps"
 RUN apt-get update
-RUN apt-get install -y wget pgp curl jq
+RUN apt-get install -y build-essential libtool autotools-dev automake pkg-config bsdmainutils python3 libevent-dev libboost-dev libsqlite3-dev libminiupnpc-dev libnatpmp-dev libzmq3-dev systemtap-sdt-dev git
 
-RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
-    case "${TARGETPLATFORM}" in \
-      "linux/amd64")  echo "bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz"    > /tarball-name ;; \
-      "linux/arm64")  echo "bitcoin-${VERSION}-aarch64-linux-gnu.tar.gz"   > /tarball-name ;; \
-      *) echo "Unsupported platform: ${TARGETPLATFORM}" && exit 1 ;; \
-    esac && \
-    echo "Tarball name: $(cat /tarball-name)"
+RUN git clone --branch custom-knots https://github.com/retropex/bitcoin
 
-RUN echo "Downloading release assets"
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/$(cat /tarball-name)
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS.asc
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS
-RUN echo "Downloaded release assets:" && ls
+WORKDIR /build/bitcoin
 
-RUN echo "Verifying PGP signatures"
-RUN curl -s "https://api.github.com/repos/bitcoinknots/guix.sigs/contents/builder-keys" | jq -r '.[].download_url' | while read url; do curl -s "$url" | gpg --import; done
-RUN gpg --verify SHA256SUMS.asc SHA256SUMS
-RUN echo "PGP signature verification passed"
+RUN ./autogen.sh && ./configure --with-gui=no --disable-tests --with-miniupnpc=no --with-natpmp=no
 
-RUN echo "Verifying checksums"
-RUN [ -f SHA256SUMS ] && cp SHA256SUMS /sha256sums || cp SHA256SUMS.asc /sha256sums
-RUN grep $(cat /tarball-name) /sha256sums | sha256sum -c
-RUN echo "Checksums verified ok"
-
-RUN echo "Extracting release assets"
-RUN tar -zxvf $(cat /tarball-name) --strip-components=1
+RUN make -j $(nproc)
 
 # Final image
 FROM debian:stable-slim
 
 RUN apt update
 
-RUN apt install curl -y
+RUN apt install curl libevent-dev libboost-dev libzmq3-dev libsqlite3-dev -y
 
-COPY --from=builder /build/bin/bitcoind /bin
-COPY --from=builder /build/bin/bitcoin-cli /bin
+COPY --from=builder /build/bitcoin/src/bitcoind /bin
+COPY --from=builder /build/bitcoin/src/bitcoin-cli /bin
 
 ENV HOME=/data
 VOLUME /data/.bitcoin
