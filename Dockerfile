@@ -1,6 +1,5 @@
 # Build stage
 FROM --platform=$BUILDPLATFORM debian:stable-slim AS builder
-LABEL org.opencontainers.image.authors="Umbrel, Inc. <https://umbrel.com>"
 
 ARG VERSION
 ARG TARGETPLATFORM
@@ -20,9 +19,9 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/$(cat /tarball-name)
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS.asc
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS
+RUN wget http://test.bitcoinknots.org/~luke-jr/programs/bitcoin/files/bitcoin-knots/29.x/29.1.knots20250805/test/rc1/$(cat /tarball-name)
+RUN wget http://test.bitcoinknots.org/~luke-jr/programs/bitcoin/files/bitcoin-knots/29.x/29.1.knots20250805/test/rc1/SHA256SUMS.asc
+RUN wget http://test.bitcoinknots.org/~luke-jr/programs/bitcoin/files/bitcoin-knots/29.x/29.1.knots20250805/test/rc1/SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
