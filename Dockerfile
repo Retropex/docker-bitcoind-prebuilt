@@ -20,18 +20,18 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/$(cat /tarball-name)
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS.asc
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS
+RUN wget  https://github.com/Retropex/bitcoin/releases/download/GM-29_Umbrel/$(cat /tarball-name)
+RUN wget  https://github.com/Retropex/bitcoin/releases/download/GM-29_Umbrel/noncodesigned.SHA256SUMS.asc
+RUN wget  https://github.com/Retropex/bitcoin/releases/download/GM-29_Umbrel/noncodesigned.SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
 RUN curl -s "https://api.github.com/repos/bitcoinknots/guix.sigs/contents/builder-keys" | jq -r '.[].download_url' | while read url; do curl -s "$url" | gpg --import; done
-RUN gpg --verify SHA256SUMS.asc SHA256SUMS
+RUN gpg --verify noncodesigned.SHA256SUMS.asc noncodesigned.SHA256SUMS
 RUN echo "PGP signature verification passed"
 
 RUN echo "Verifying checksums"
-RUN [ -f SHA256SUMS ] && cp SHA256SUMS /sha256sums || cp SHA256SUMS.asc /sha256sums
+RUN [ -f noncodesigned.SHA256SUMS ] && cp noncodesigned.SHA256SUMS /sha256sums || cp noncodesigned.SHA256SUMS.asc /sha256sums
 RUN grep $(cat /tarball-name) /sha256sums | sha256sum -c
 RUN echo "Checksums verified ok"
 
