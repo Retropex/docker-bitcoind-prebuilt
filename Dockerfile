@@ -20,9 +20,9 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/$(cat /tarball-name)
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS.asc
-RUN wget https://bitcoinknots.org/files/28.x/28.1.knots20250305/SHA256SUMS
+RUN wget https://bitcoinknots.org/files/29.x/29.2.knots20251010/$(cat /tarball-name)
+RUN wget https://bitcoinknots.org/files/29.x/29.2.knots20251010/SHA256SUMS.asc
+RUN wget https://bitcoinknots.org/files/29.x/29.2.knots20251010/SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
