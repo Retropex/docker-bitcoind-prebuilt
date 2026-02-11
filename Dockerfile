@@ -20,10 +20,13 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://bitcoinknots.org/files/29.x/29.2.knots20251110/$(cat /tarball-name)
-RUN wget https://bitcoinknots.org/files/29.x/29.2.knots20251110/SHA256SUMS.asc
-RUN wget https://bitcoinknots.org/files/29.x/29.2.knots20251110/SHA256SUMS
+RUN wget https://bitcoinknots.org/files/29.x/29.3.knots20260210/$(cat /tarball-name)
+RUN wget https://bitcoinknots.org/files/29.x/29.3.knots20260210/SHA256SUMS.asc
+RUN wget https://bitcoinknots.org/files/29.x/29.3.knots20260210/SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
+
+# will be removed next release, workaroud Mechanic missing key
+RUN curl -s -L "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x95636f3538d9262765ab29bee952e584ca8c0f45" | gpg --import
 
 RUN echo "Verifying PGP signatures"
 RUN curl -s "https://api.github.com/repos/bitcoinknots/guix.sigs/contents/builder-keys" | jq -r '.[].download_url' | while read url; do curl -s "$url" | gpg --import; done
