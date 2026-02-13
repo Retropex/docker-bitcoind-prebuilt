@@ -20,13 +20,13 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.2.knots20251110%2Bbip110-v0.1/$(cat /tarball-name)
-RUN wget https://raw.githubusercontent.com/dathonohm/guix.sigs/refs/heads/bip110/29.2.knots20251110%2Bbip110-v0.1/leo-haf/all.SHA256SUMS.asc -O SHA256SUMS.asc
-RUN wget https://raw.githubusercontent.com/dathonohm/guix.sigs/refs/heads/bip110/29.2.knots20251110%2Bbip110-v0.1/leo-haf/all.SHA256SUMS -O SHA256SUMS
+RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.2/$(cat /tarball-name)
+RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.2/SHA256SUMS.asc -O SHA256SUMS.asc
+RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.2/SHA256SUMS -O SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
-RUN curl -s "https://api.github.com/repos/bitcoinknots/guix.sigs/contents/builder-keys" | jq -r '.[].download_url' | while read url; do curl -s "$url" | gpg --import; done
+RUN curl -s "https://api.github.com/repos/dathonohm/guix.sigs/contents/builder-keys" | jq -r '.[].download_url' | while read url; do curl -s "$url" | gpg --import; done
 RUN gpg --verify SHA256SUMS.asc SHA256SUMS
 RUN echo "PGP signature verification passed"
 
