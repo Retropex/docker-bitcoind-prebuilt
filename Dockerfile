@@ -20,9 +20,9 @@ RUN echo "Deriving tarball name from \$TARGETPLATFORM" && \
     echo "Tarball name: $(cat /tarball-name)"
 
 RUN echo "Downloading release assets"
-RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.3/$(cat /tarball-name)
-RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.3/SHA256SUMS.asc -O SHA256SUMS.asc
-RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.3/SHA256SUMS -O SHA256SUMS
+RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.4.1/$(cat /tarball-name)
+RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.4.1/SHA256SUMS.asc -O SHA256SUMS.asc
+RUN wget https://github.com/dathonohm/bitcoin/releases/download/v29.3.knots20260210%2Bbip110-v0.4.1/SHA256SUMS -O SHA256SUMS
 RUN echo "Downloaded release assets:" && ls
 
 RUN echo "Verifying PGP signatures"
